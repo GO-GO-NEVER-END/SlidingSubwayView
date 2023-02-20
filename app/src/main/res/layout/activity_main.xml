@@ -18,23 +18,12 @@
             android:layout_height="wrap_content"
             app:subwayColor="@color/subway_7"
             app:subwayCircleState="IDLE"
-            app:subwayCircleRadius="25"
+            app:subwayCircleRadius="50"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/stationCircleView2"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.ggne.slidingsubway.stationcircle.StationCircleView
-            android:id="@+id/stationCircleView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:subwayColor="@color/subway_7"
-            app:subwayCircleState="IDLE"
-            app:subwayCircleRadius="25"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/stationCircleView"
-            app:layout_constraintTop_toTopOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

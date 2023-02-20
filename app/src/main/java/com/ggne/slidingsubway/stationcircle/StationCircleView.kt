@@ -4,9 +4,9 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.Interpolator
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.ColorInt
@@ -21,9 +21,10 @@ class StationCircleView(context: Context, attrs: AttributeSet) :
     private var circleState: CircleState
     private val maxCircleRadius: Float
     private var circleRadius: Float
+    private var innerCircleRadius: Float
 
     private val valueAnimator: ValueAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
-        duration = 500
+        duration = 200
         addUpdateListener(this@StationCircleView)
     }
 
@@ -42,13 +43,17 @@ class StationCircleView(context: Context, attrs: AttributeSet) :
                 recycle()
             }
         }
-        circleRadius = maxCircleRadius
-    }
 
-    private val strokePaint = Paint().apply {
-        color = subwayColor
-        style = Paint.Style.STROKE
-        strokeWidth = 15f
+        when (circleState) {
+            CircleState.FOCUS -> {
+                innerCircleRadius = maxCircleRadius * INNER_DOWNSCALE
+                circleRadius = maxCircleRadius
+            }
+            CircleState.IDLE -> {
+                innerCircleRadius = 0f
+                circleRadius = maxCircleRadius * DOWNSCALE
+            }
+        }
     }
 
     private val fillPaint = Paint().apply {
@@ -68,17 +73,9 @@ class StationCircleView(context: Context, attrs: AttributeSet) :
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-
-        when (circleState) {
-            CircleState.FOCUS -> {
-                canvas.drawCircle(width / 2.toFloat(), height / 2.toFloat(), circleRadius, strokePaint)
-                canvas.drawCircle(width / 2.toFloat(), height / 2.toFloat(), circleRadius, whiteFillPaint)
-            }
-            CircleState.IDLE -> {
-                fillPaint.color = subwayColor
-                canvas.drawCircle(width / 2.toFloat(), height / 2.toFloat(), circleRadius, fillPaint)
-            }
-        }
+        canvas.drawCircle(width / 2.toFloat(), height / 2.toFloat(), circleRadius, fillPaint)
+        canvas.drawCircle(width / 2.toFloat(), height / 2.toFloat(), innerCircleRadius, whiteFillPaint)
+        Log.d("Circle", "circle = $circleRadius | inner = $innerCircleRadius")
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -103,14 +100,12 @@ class StationCircleView(context: Context, attrs: AttributeSet) :
 
         when (circleState) {
             CircleState.FOCUS -> {
-                whiteFillPaint.alpha = (scale * 255).toInt()
-                fillPaint.alpha = 255 - (scale * 255).toInt()
-                circleRadius = (maxCircleRadius * DOWNSCALE) + 0.1f * scale
+                innerCircleRadius = (maxCircleRadius * INNER_DOWNSCALE) * scale
+                circleRadius = maxCircleRadius * DOWNSCALE + maxCircleRadius * (1f - DOWNSCALE) * scale
             }
             CircleState.IDLE -> {
-                whiteFillPaint.alpha = 255 - (scale * 255).toInt()
-                fillPaint.alpha = (scale * 255).toInt()
-                circleRadius = maxCircleRadius - 0.1f * scale
+                innerCircleRadius = (maxCircleRadius * INNER_DOWNSCALE) *  (1f - scale)
+                circleRadius = maxCircleRadius - maxCircleRadius * (1f - DOWNSCALE) * scale
             }
         }
 
@@ -118,6 +113,7 @@ class StationCircleView(context: Context, attrs: AttributeSet) :
     }
 
     companion object {
-        private const val DOWNSCALE = 0.9f
+        private const val DOWNSCALE = 0.8f
+        private const val INNER_DOWNSCALE = 0.7f
     }
 }
