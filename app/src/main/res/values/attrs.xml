@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="StationCircleView">
-        <attr name="subwayColor" format="color"/>
+        <attr name="subwayCircleColor" format="color"/>
         <attr name="subwayCircleRadius" format="float"/>
         <attr name="subwayCircleState" format="enum">
             <enum name="FOCUS" value="0"/>
             <enum name="IDLE" value="1"/>
         </attr>
+    </declare-styleable>
+
+    <declare-styleable name="SlidingSubwayView">
+        <attr name="subwayColor" format="color"/>
     </declare-styleable>
 </resources>

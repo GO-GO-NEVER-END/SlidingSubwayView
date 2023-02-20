@@ -36,7 +36,7 @@ class StationCircleView(context: Context, attrs: AttributeSet) :
             0
         ).apply {
             try {
-                subwayColor = getColor(R.styleable.StationCircleView_subwayColor, 0)
+                subwayColor = getColor(R.styleable.StationCircleView_subwayCircleColor, 0)
                 circleState = CircleState.values()[getInteger(R.styleable.StationCircleView_subwayCircleState, 1)]
                 maxCircleRadius = getFloat(R.styleable.StationCircleView_subwayCircleRadius, 25f)
             } finally {
