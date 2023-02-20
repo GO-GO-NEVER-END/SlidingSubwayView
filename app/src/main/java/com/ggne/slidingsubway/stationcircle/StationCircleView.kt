@@ -17,7 +17,7 @@ class StationCircleView(context: Context, attrs: AttributeSet) :
     ValueAnimator.AnimatorUpdateListener {
 
     @ColorInt
-    private val subwayColor: Int
+    private var subwayColor: Int
     private var circleState: CircleState
     private val maxCircleRadius: Float
     private var circleRadius: Float
@@ -95,6 +95,11 @@ class StationCircleView(context: Context, attrs: AttributeSet) :
         valueAnimator.start()
     }
 
+    fun changeCircleColor(@ColorInt color: Int) {
+        subwayColor = color
+        invalidate()
+    }
+
     override fun onAnimationUpdate(animation: ValueAnimator) {
         val scale = animation.animatedValue as Float
 
@@ -104,7 +109,7 @@ class StationCircleView(context: Context, attrs: AttributeSet) :
                 circleRadius = maxCircleRadius * DOWNSCALE + maxCircleRadius * (1f - DOWNSCALE) * scale
             }
             CircleState.IDLE -> {
-                innerCircleRadius = (maxCircleRadius * INNER_DOWNSCALE) *  (1f - scale)
+                innerCircleRadius = (maxCircleRadius * INNER_DOWNSCALE) * (1f - scale)
                 circleRadius = maxCircleRadius - maxCircleRadius * (1f - DOWNSCALE) * scale
             }
         }
