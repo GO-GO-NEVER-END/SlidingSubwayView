@@ -1,8 +1,10 @@
 package com.ggne.slidingsubway.stationcircle
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Interpolator
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.MotionEvent
@@ -10,12 +12,20 @@ import android.view.View
 import androidx.annotation.ColorInt
 import com.ggne.slidingsubway.R
 
-class StationCircleView(context: Context, attrs: AttributeSet) : View(context, attrs) {
+class StationCircleView(context: Context, attrs: AttributeSet) :
+    View(context, attrs),
+    ValueAnimator.AnimatorUpdateListener {
 
     @ColorInt
     private val subwayColor: Int
     private var circleState: CircleState
-    private val circleRadius: Float
+    private val maxCircleRadius: Float
+    private var circleRadius: Float
+
+    private val valueAnimator: ValueAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
+        duration = 500
+        addUpdateListener(this@StationCircleView)
+    }
 
     init {
         context.theme.obtainStyledAttributes(
@@ -27,11 +37,12 @@ class StationCircleView(context: Context, attrs: AttributeSet) : View(context, a
             try {
                 subwayColor = getColor(R.styleable.StationCircleView_subwayColor, 0)
                 circleState = CircleState.values()[getInteger(R.styleable.StationCircleView_subwayCircleState, 1)]
-                circleRadius = getFloat(R.styleable.StationCircleView_subwayCircleRadius, 25f)
+                maxCircleRadius = getFloat(R.styleable.StationCircleView_subwayCircleRadius, 25f)
             } finally {
                 recycle()
             }
         }
+        circleRadius = maxCircleRadius
     }
 
     private val strokePaint = Paint().apply {
@@ -41,11 +52,17 @@ class StationCircleView(context: Context, attrs: AttributeSet) : View(context, a
     }
 
     private val fillPaint = Paint().apply {
+        color = subwayColor
         style = Paint.Style.FILL
     }
 
+    private val whiteFillPaint = Paint().apply {
+        style = Paint.Style.FILL
+        color = Color.parseColor("#FFFFFF")
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val diameter = (circleRadius * 3f).toInt()
+        val diameter = (maxCircleRadius * 3f).toInt()
         setMeasuredDimension(diameter, diameter)
     }
 
@@ -55,12 +72,11 @@ class StationCircleView(context: Context, attrs: AttributeSet) : View(context, a
         when (circleState) {
             CircleState.FOCUS -> {
                 canvas.drawCircle(width / 2.toFloat(), height / 2.toFloat(), circleRadius, strokePaint)
-                fillPaint.color = Color.parseColor("#FFFFFF")
-                canvas.drawCircle(width / 2.toFloat(), height / 2.toFloat(), circleRadius, fillPaint)
+                canvas.drawCircle(width / 2.toFloat(), height / 2.toFloat(), circleRadius, whiteFillPaint)
             }
             CircleState.IDLE -> {
                 fillPaint.color = subwayColor
-                canvas.drawCircle(width / 2.toFloat(), height / 2.toFloat(), circleRadius * DOWNSCALE, fillPaint)
+                canvas.drawCircle(width / 2.toFloat(), height / 2.toFloat(), circleRadius, fillPaint)
             }
         }
     }
@@ -79,6 +95,25 @@ class StationCircleView(context: Context, attrs: AttributeSet) : View(context, a
 
     fun changeCircleState(newState: CircleState) {
         circleState = newState
+        valueAnimator.start()
+    }
+
+    override fun onAnimationUpdate(animation: ValueAnimator) {
+        val scale = animation.animatedValue as Float
+
+        when (circleState) {
+            CircleState.FOCUS -> {
+                whiteFillPaint.alpha = (scale * 255).toInt()
+                fillPaint.alpha = 255 - (scale * 255).toInt()
+                circleRadius = (maxCircleRadius * DOWNSCALE) + 0.1f * scale
+            }
+            CircleState.IDLE -> {
+                whiteFillPaint.alpha = 255 - (scale * 255).toInt()
+                fillPaint.alpha = (scale * 255).toInt()
+                circleRadius = maxCircleRadius - 0.1f * scale
+            }
+        }
+
         invalidate()
     }
 
