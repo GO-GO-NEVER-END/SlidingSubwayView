@@ -75,7 +75,6 @@ class StationCircleView(context: Context, attrs: AttributeSet) :
         super.onDraw(canvas)
         canvas.drawCircle(width / 2.toFloat(), height / 2.toFloat(), circleRadius, fillPaint)
         canvas.drawCircle(width / 2.toFloat(), height / 2.toFloat(), innerCircleRadius, whiteFillPaint)
-        Log.d("Circle", "circle = $circleRadius | inner = $innerCircleRadius")
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
