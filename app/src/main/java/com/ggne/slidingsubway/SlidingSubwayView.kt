@@ -1,19 +1,17 @@
 package com.ggne.slidingsubway
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Paint
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
+import android.widget.FrameLayout
 import androidx.annotation.ColorInt
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.annotation.ColorRes
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ggne.slidingsubway.databinding.SlidingSubwayViewBinding
 
-class SlidingSubwayView(context: Context, attrs: AttributeSet) : ConstraintLayout(context, attrs) {
+class SlidingSubwayView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
 
     @ColorInt
     private var subwayColor: Int
@@ -47,17 +45,8 @@ class SlidingSubwayView(context: Context, attrs: AttributeSet) : ConstraintLayou
             adapter = stationListAdapter
             layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         }
-    }
 
-    private val paint = Paint().apply {
-        color = subwayColor
-        strokeWidth = 20f
-    }
-
-    override fun dispatchDraw(canvas: Canvas) {
-        super.dispatchDraw(canvas)
-        Log.d("WHAT", "View: dispatchDraw")
-        canvas.drawLine(0f, height * 0.28f, width.toFloat(), height * 0.28f, paint)
+        binding.subwayLineView.changeLineColor(subwayColor)
     }
 
     fun submitList(list: List<Station>) {

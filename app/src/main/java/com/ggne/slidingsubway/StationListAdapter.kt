@@ -14,12 +14,10 @@ class StationListAdapter : ListAdapter<Station, StationListAdapter.StationViewHo
         fun bind(station: Station) {
             binding.station = station
             binding.stationCircleView.changeCircleColor(R.color.subway_7)
-            Log.d("WHAT", station.name)
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StationViewHolder {
-        Log.d("WHAT", "onCreateViewHolder")
         return StationViewHolder(
             ItemStationBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -30,7 +28,6 @@ class StationListAdapter : ListAdapter<Station, StationListAdapter.StationViewHo
     }
 
     override fun onBindViewHolder(holder: StationViewHolder, position: Int) {
-        Log.d("WHAT", "onBindViewHolder : $position")
         holder.bind(currentList[position])
     }
 

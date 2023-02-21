@@ -7,9 +7,14 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <com.ggne.slidingsubway.subwayline.SubwayLineView
+            android:id="@+id/subway_line_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_station"
@@ -20,5 +25,5 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:listitem="@layout/item_station" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
 </layout>

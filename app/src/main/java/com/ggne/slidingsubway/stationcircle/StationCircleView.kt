@@ -7,7 +7,6 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.ColorInt
@@ -85,7 +84,6 @@ class StationCircleView : View, ValueAnimator.AnimatorUpdateListener {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        Log.d("WHAT", "Circle: onDraw color = ${fillPaint.color}")
         canvas.drawCircle(width / 2.toFloat(), height / 2.toFloat(), circleRadius, fillPaint)
         canvas.drawCircle(width / 2.toFloat(), height / 2.toFloat(), innerCircleRadius, whiteFillPaint)
     }
@@ -93,10 +91,6 @@ class StationCircleView : View, ValueAnimator.AnimatorUpdateListener {
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         when (event?.action) {
             MotionEvent.ACTION_DOWN -> {
-                when (circleState) {
-                    CircleState.FOCUS -> changeCircleState(CircleState.IDLE)
-                    CircleState.IDLE -> changeCircleState(CircleState.FOCUS)
-                }
             }
         }
         return super.onTouchEvent(event)
