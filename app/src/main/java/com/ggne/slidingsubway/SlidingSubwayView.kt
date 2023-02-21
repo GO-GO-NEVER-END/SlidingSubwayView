@@ -5,7 +5,6 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.annotation.ColorInt
-import androidx.annotation.ColorRes
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,6 +23,12 @@ class SlidingSubwayView(context: Context, attrs: AttributeSet) : FrameLayout(con
     )
 
     private val stationListAdapter = StationListAdapter()
+    private val onScrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            super.onScrollStateChanged(recyclerView, newState)
+            focusing()
+        }
+    }
 
     init {
         context.theme.obtainStyledAttributes(
@@ -44,6 +49,7 @@ class SlidingSubwayView(context: Context, attrs: AttributeSet) : FrameLayout(con
         binding.rvStation.apply {
             adapter = stationListAdapter
             layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+            addOnScrollListener(onScrollListener)
         }
 
         binding.subwayLineView.changeLineColor(subwayColor)
@@ -51,5 +57,17 @@ class SlidingSubwayView(context: Context, attrs: AttributeSet) : FrameLayout(con
 
     fun submitList(list: List<Station>) {
         stationListAdapter.submitList(list)
+    }
+
+    private fun focusing() {
+        val centerPosition =
+            (binding.rvStation.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() + 2
+
+        (binding.rvStation.findViewHolderForAdapterPosition(centerPosition) as StationListAdapter.StationViewHolder?)?.focus()
+
+        for (i in 1..2) {
+            (binding.rvStation.findViewHolderForAdapterPosition(centerPosition - i) as StationListAdapter.StationViewHolder?)?.idle()
+            (binding.rvStation.findViewHolderForAdapterPosition(centerPosition + i) as StationListAdapter.StationViewHolder?)?.idle()
+        }
     }
 }

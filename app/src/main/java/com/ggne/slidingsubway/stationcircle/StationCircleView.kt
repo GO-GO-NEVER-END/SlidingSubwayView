@@ -97,6 +97,7 @@ class StationCircleView : View, ValueAnimator.AnimatorUpdateListener {
     }
 
     fun changeCircleState(newState: CircleState) {
+        if (circleState == newState) return
         circleState = newState
         valueAnimator.start()
     }
@@ -125,7 +126,7 @@ class StationCircleView : View, ValueAnimator.AnimatorUpdateListener {
     }
 
     companion object {
-        private const val DOWNSCALE = 0.8f
-        private const val INNER_DOWNSCALE = 0.7f
+        private const val DOWNSCALE = 0.7f
+        private const val INNER_DOWNSCALE = 0.6f
     }
 }

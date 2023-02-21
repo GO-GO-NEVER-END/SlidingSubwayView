@@ -1,12 +1,12 @@
 package com.ggne.slidingsubway
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.ggne.slidingsubway.databinding.ItemStationBinding
+import com.ggne.slidingsubway.stationcircle.CircleState
 
 class StationListAdapter : ListAdapter<Station, StationListAdapter.StationViewHolder>(diffUtil) {
 
@@ -14,6 +14,14 @@ class StationListAdapter : ListAdapter<Station, StationListAdapter.StationViewHo
         fun bind(station: Station) {
             binding.station = station
             binding.stationCircleView.changeCircleColor(R.color.subway_7)
+        }
+
+        fun focus() {
+            binding.stationCircleView.changeCircleState(CircleState.FOCUS)
+        }
+
+        fun idle() {
+            binding.stationCircleView.changeCircleState(CircleState.IDLE)
         }
     }
 
