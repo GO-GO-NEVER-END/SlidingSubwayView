@@ -13,6 +13,7 @@
         tools:context=".MainActivity">
 
         <com.ggne.slidingsubway.SlidingSubwayView
+            android:id="@+id/sliding_subway_view"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -1,6 +1,7 @@
 package com.ggne.slidingsubway.stationcircle
 
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -10,25 +11,34 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
 import com.ggne.slidingsubway.R
 
-class StationCircleView(context: Context, attrs: AttributeSet) :
-    View(context, attrs),
-    ValueAnimator.AnimatorUpdateListener {
+@SuppressLint("ResourceAsColor")
+class StationCircleView : View, ValueAnimator.AnimatorUpdateListener {
 
     @ColorInt
-    private var subwayColor: Int
-    private var circleState: CircleState
-    private val maxCircleRadius: Float
-    private var circleRadius: Float
-    private var innerCircleRadius: Float
+    private var subwayColor: Int = 0
+    private var circleState: CircleState = CircleState.IDLE
+    private var maxCircleRadius: Float = 50f
+    private var circleRadius: Float = maxCircleRadius * DOWNSCALE
+    private var innerCircleRadius: Float = 0f
 
     private val valueAnimator: ValueAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
         duration = 200
         addUpdateListener(this@StationCircleView)
     }
 
-    init {
+    constructor(context: Context) : super(context) {
+        init()
+    }
+
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
+        getAttrs(attrs)
+        init()
+    }
+
+    private fun getAttrs(attrs: AttributeSet) {
         context.theme.obtainStyledAttributes(
             attrs,
             R.styleable.StationCircleView,
@@ -36,14 +46,16 @@ class StationCircleView(context: Context, attrs: AttributeSet) :
             0
         ).apply {
             try {
-                subwayColor = getColor(R.styleable.StationCircleView_subwayCircleColor, 0)
+                subwayColor = getColor(R.styleable.StationCircleView_subwayCircleColor, R.color.subway_2)
                 circleState = CircleState.values()[getInteger(R.styleable.StationCircleView_subwayCircleState, 1)]
-                maxCircleRadius = getFloat(R.styleable.StationCircleView_subwayCircleRadius, 25f)
+                maxCircleRadius = getFloat(R.styleable.StationCircleView_subwayCircleRadius, 50f)
             } finally {
                 recycle()
             }
         }
+    }
 
+    private fun init() {
         when (circleState) {
             CircleState.FOCUS -> {
                 innerCircleRadius = maxCircleRadius * INNER_DOWNSCALE
@@ -73,6 +85,7 @@ class StationCircleView(context: Context, attrs: AttributeSet) :
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        Log.d("WHAT", "Circle: onDraw color = ${fillPaint.color}")
         canvas.drawCircle(width / 2.toFloat(), height / 2.toFloat(), circleRadius, fillPaint)
         canvas.drawCircle(width / 2.toFloat(), height / 2.toFloat(), innerCircleRadius, whiteFillPaint)
     }
@@ -94,8 +107,9 @@ class StationCircleView(context: Context, attrs: AttributeSet) :
         valueAnimator.start()
     }
 
-    fun changeCircleColor(@ColorInt color: Int) {
-        subwayColor = color
+    fun changeCircleColor(@ColorRes colorId: Int) {
+        subwayColor = context.getColor(colorId)
+        fillPaint.color = subwayColor
         invalidate()
     }
 
