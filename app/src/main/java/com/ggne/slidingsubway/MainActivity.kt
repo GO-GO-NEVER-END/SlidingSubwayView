@@ -9,6 +9,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private val stationList = listOf(
+        Station("보라매"),
+        Station("신대방삼거리"),
+        Station("장승배기"),
+        Station("상도"),
+        Station("숭실대입구"),
+        Station("남성"),
+        Station("이수"),
+        Station("내방"),
         Station("고속터미널"),
         Station("반포"),
         Station("논현"),
@@ -19,7 +27,12 @@ class MainActivity : AppCompatActivity() {
         Station("건대입구"),
         Station("어린이대공원"),
         Station("군자"),
-        Station("중곡")
+        Station("중곡"),
+        Station("용마산"),
+        Station("사가정"),
+        Station("면목"),
+        Station("상봉"),
+        Station("중화")
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
