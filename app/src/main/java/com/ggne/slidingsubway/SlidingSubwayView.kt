@@ -2,12 +2,10 @@ package com.ggne.slidingsubway
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.databinding.DataBindingUtil
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ggne.slidingsubway.databinding.SlidingSubwayViewBinding
 
@@ -27,9 +25,17 @@ class SlidingSubwayView(context: Context, attrs: AttributeSet) : FrameLayout(con
     private val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             super.onScrollStateChanged(recyclerView, newState)
-            focusItem()
-            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                binding.rvStation.smoothScrollToPosition(focusingItem-2)
+
+            focusStation()
+
+            when (newState) {
+                RecyclerView.SCROLL_STATE_DRAGGING -> {
+                    (binding.rvStation.findViewHolderForAdapterPosition(focusingItem) as StationListAdapter.StationViewHolder?)?.idle()
+                }
+                RecyclerView.SCROLL_STATE_IDLE -> {
+                    playCircleAnimation()
+                    binding.rvStation.smoothScrollToPosition(focusingItem - 2)
+                }
             }
         }
     }
@@ -59,7 +65,7 @@ class SlidingSubwayView(context: Context, attrs: AttributeSet) : FrameLayout(con
 
         binding.rvStation.apply {
             adapter = stationListAdapter
-            layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+            layoutManager = SlidingSubwayLinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             addOnScrollListener(onScrollListener)
         }
 
@@ -70,16 +76,19 @@ class SlidingSubwayView(context: Context, attrs: AttributeSet) : FrameLayout(con
         stationListAdapter.submitList(list)
     }
 
-    private fun focusItem() {
-        val layoutManager = (binding.rvStation.layoutManager as LinearLayoutManager)
+    private fun focusStation() {
+        val layoutManager = (binding.rvStation.layoutManager as SlidingSubwayLinearLayoutManager)
         val newFocusItem = layoutManager.findFirstVisibleItemPosition() + 2
         if (focusingItem == newFocusItem) return
 
-        (binding.rvStation.findViewHolderForAdapterPosition(focusingItem) as StationListAdapter.StationViewHolder?)?.idle()
         focusingItem = newFocusItem
-        (binding.rvStation.findViewHolderForAdapterPosition(focusingItem) as StationListAdapter.StationViewHolder?)?.focus()
     }
 
-
-
+    private fun playCircleAnimation() {
+        for (i in 1..2) {
+            (binding.rvStation.findViewHolderForAdapterPosition(focusingItem - i) as StationListAdapter.StationViewHolder?)?.idle()
+            (binding.rvStation.findViewHolderForAdapterPosition(focusingItem + i) as StationListAdapter.StationViewHolder?)?.idle()
+        }
+        (binding.rvStation.findViewHolderForAdapterPosition(focusingItem) as StationListAdapter.StationViewHolder?)?.focus()
+    }
 }
